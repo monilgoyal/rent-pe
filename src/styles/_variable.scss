@@ -1,0 +1,4 @@
+$color-light: ( primary: #fff, // $primary: #f17d0f,
+// $primaryHover: #b8610f,
+secondary: #000, );
+$color-dark: ( primary:map-get($color-light, secondary), secondary:map-get($color-light, primary));
