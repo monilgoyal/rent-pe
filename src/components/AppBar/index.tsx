@@ -14,7 +14,23 @@ import Link from 'next/link'
 import DrawerToggler from './DrawerToggler';
 import SearchBar from './SearchBar';
 import ThemeToggler from './ThemeToggler';
-import { useMediaQuery } from '@mui/material';
+import { easing, useMediaQuery } from '@mui/material';
+import { useScrollTrigger } from '@mui/material';
+import { Slide } from '@mui/material';
+
+interface Props {
+    children: React.ReactElement
+}
+function HideOnScroll({ children }: Props) {
+    const above_900 = useMediaQuery('(min-width:900px)');
+    const trigger = useScrollTrigger();
+    return (
+        <Slide appear={false} direction={'down'} in={above_900 || !trigger} easing={{ enter: easing.easeIn, exit: easing.easeIn, }}>
+            {children}
+        </Slide>
+
+    )
+}
 
 export default function AppBar() {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -114,66 +130,68 @@ export default function AppBar() {
             </MenuItem>
         </Menu>
     );
-    const IsTouch = useMediaQuery('(min-width:900px)');
+    const above_900 = useMediaQuery('(min-width:900px)');
     return (
-        <Box sx={{ flexGrow: 1 }}>
-            <MuiAppBar position="fixed">
-                <Toolbar>
-                    <DrawerToggler />
-                    <Typography
-                        variant="h6"
-                        noWrap
-                        component="div"
-                    >
-                        <Link href="/">Online Store</Link>
-                    </Typography>
-                    <Box sx={{ flexGrow: 1 }} />
-                    <SearchBar />
-                    {IsTouch && <ThemeToggler />}
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'block' } }} />
-                    <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
-                        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-                            <Badge badgeContent={4} color="error">
-                                <MailIcon />
-                            </Badge>
-                        </IconButton>
-                        <IconButton
-                            size="large"
-                            aria-label="show 17 new notifications"
-                            color="inherit"
+        <HideOnScroll>
+            <Box sx={{ flexGrow: 1 }}>
+                <MuiAppBar position="fixed">
+                    <Toolbar>
+                        <DrawerToggler />
+                        <Typography
+                            variant="h6"
+                            noWrap
+                            component="div"
                         >
-                            <Badge badgeContent={17} color="error">
-                                <NotificationsIcon />
-                            </Badge>
-                        </IconButton>
-                        <IconButton
-                            size="large"
-                            edge="end"
-                            aria-label="account of current user"
-                            aria-controls={menuId}
-                            aria-haspopup="true"
-                            onClick={handleProfileMenuOpen}
-                            color="inherit"
-                        >
-                            <AccountCircle />
-                        </IconButton>
-                    </Box>
-                    <Box sx={{ display: { xs: 'flex', sm: 'none' } }}>
-                        <IconButton
-                            size="large"
-                            aria-label="show more"
-                            aria-controls={mobileMenuId}
-                            aria-haspopup="true"
-                            onClick={handleMobileMenuOpen}
-                            color="inherit"
-                        >
-                            <AccountCircle />
-                        </IconButton>
-                    </Box>
-                </Toolbar>
-            </MuiAppBar>
-            {renderMobileMenu}
-            {renderMenu}
-        </Box>
+                            <Link href="/">Online Store</Link>
+                        </Typography>
+                        <Box sx={{ flexGrow: 1 }} />
+                        <SearchBar />
+                        {above_900 && <ThemeToggler />}
+                        <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'block' } }} />
+                        <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
+                            <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+                                <Badge badgeContent={4} color="error">
+                                    <MailIcon />
+                                </Badge>
+                            </IconButton>
+                            <IconButton
+                                size="large"
+                                aria-label="show 17 new notifications"
+                                color="inherit"
+                            >
+                                <Badge badgeContent={17} color="error">
+                                    <NotificationsIcon />
+                                </Badge>
+                            </IconButton>
+                            <IconButton
+                                size="large"
+                                edge="end"
+                                aria-label="account of current user"
+                                aria-controls={menuId}
+                                aria-haspopup="true"
+                                onClick={handleProfileMenuOpen}
+                                color="inherit"
+                            >
+                                <AccountCircle />
+                            </IconButton>
+                        </Box>
+                        <Box sx={{ display: { xs: 'flex', sm: 'none' } }}>
+                            <IconButton
+                                size="large"
+                                aria-label="show more"
+                                aria-controls={mobileMenuId}
+                                aria-haspopup="true"
+                                onClick={handleMobileMenuOpen}
+                                color="inherit"
+                            >
+                                <AccountCircle />
+                            </IconButton>
+                        </Box>
+                    </Toolbar>
+                </MuiAppBar>
+                {renderMobileMenu}
+                {renderMenu}
+            </Box>
+        </HideOnScroll>
     );
 }

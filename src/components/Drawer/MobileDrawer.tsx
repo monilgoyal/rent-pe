@@ -15,13 +15,13 @@ const ToolBar = styled(Toolbar)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? 'initial' : '#673ab7'
 }))
 export default function MobileDrawer({ children }) {
-    const IsTouch = useMediaQuery('(min-width:900px)');
+    const above_900 = useMediaQuery('(min-width:900px)');
     const open = useSelector((state: RootState) => state.IsOpen)
     const dispatch = useDispatch()
     const toggleDrawer = bindActionCreators(actionCreator.drawerToggle, dispatch)
     return (
         <SwipeableDrawer
-            open={!IsTouch && open}
+            open={!above_900 && open}
             onClose={toggleDrawer}
             onOpen={toggleDrawer}
             sx={{ display: { xs: 'flex', md: 'none', overflowX: "hidden" } }}
