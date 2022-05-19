@@ -5,14 +5,19 @@ import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
 import CssBaseline from '@mui/material/CssBaseline';
 import { RootState } from '../../state/reducers';
-import { useSelector } from 'react-redux';
-import { Divider, List, ListItem, ListItemIcon, ListItemText, useMediaQuery } from '@mui/material';
-import RestoreIcon from '@mui/icons-material/Restore';
+import { useDispatch, useSelector } from 'react-redux';
+import { CardContent, Divider, IconButton, IconButtonProps, List, ListItem, ListItemIcon, ListItemText, Typography, useMediaQuery } from '@mui/material';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import FolderIcon from '@mui/icons-material/Folder';
 import ScrollBar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Collapse from '@mui/material/Collapse';
+import { useEffect } from 'react';
+import { bindActionCreators } from 'redux';
+import { actionCreator } from '../../state';
 
 const drawerWidth = 240;
 // export const DrawerHeader = styled('div')(({ theme }) => ({
@@ -70,9 +75,50 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     }),
 );
 
+interface ExpandMoreProps extends IconButtonProps {
+    expand: boolean;
+}
+
+const ExpandMore = styled((props: ExpandMoreProps) => {
+    const { expand, ...other } = props;
+    return <IconButton {...other} />;
+})(({ theme, expand }) => ({
+    transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', {
+        duration: theme.transitions.duration.shortest,
+    }),
+}));
+
 export default function DesktopDrawer({ children }) {
     const above_1313 = useMediaQuery('(min-width:1313px)');
     const open = useSelector((state: RootState) => state.IsOpen)
+    const [expanded, setExpanded] = React.useState(false);
+    const dispatch = useDispatch()
+    const toggleDrawer = bindActionCreators(actionCreator.drawerToggle, dispatch)
+
+    const handleExpandClick = () => {
+        if (!open && above_1313)
+            setExpanded(!expanded);
+        else if (open && above_1313) {
+            toggleDrawer()
+            setExpanded(true);
+        }
+        else if (open && !above_1313) {
+            setExpanded(!expanded);
+
+        }
+        else {
+            toggleDrawer()
+            setExpanded(true);
+        }
+    };
+    // useEffect(() => {
+    //     if (expanded) {
+    //         toggleDrawer()
+    //     }
+    // }, [expanded])
+
     return (
 
         <Box position="relative" display="flex" >
@@ -80,30 +126,38 @@ export default function DesktopDrawer({ children }) {
             <Drawer variant="permanent" sx={{ display: { xs: 'none', md: "flex" } }} open={above_1313 ? !open : open}>
                 <ScrollBar component="div">
                     <List>
-                        <ListItem button key={'Recent'}>
-                            <ListItemIcon>
-                                <RestoreIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={'Recent'} />
-                        </ListItem>
-                        <ListItem button key={'Favorites'}>
-                            <ListItemIcon>
-                                <FavoriteIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={'Favorites'} />
-                        </ListItem>
                         <ListItem button key={'Nearby'}>
                             <ListItemIcon>
                                 <LocationOnIcon />
                             </ListItemIcon>
                             <ListItemText primary={'Nearby'} />
                         </ListItem>
-                        <ListItem button key={'Folder'}>
+                        <ListItem button key={'Wishlist'}>
                             <ListItemIcon>
-                                <FolderIcon />
+                                <FavoriteIcon />
                             </ListItemIcon>
-                            <ListItemText primary={'Folder'} />
+                            <ListItemText primary={'Wishlist'} />
                         </ListItem>
+                        <ListItem button key={'Filters'} onClick={handleExpandClick}>
+                            <ListItemIcon>
+                                <FilterAltIcon />
+                            </ListItemIcon>
+                            <ListItemText primary={'Filters'} />
+
+                            <ExpandMore
+                                expand={expanded}
+                                onClick={handleExpandClick}
+                                aria-expanded={expanded}
+                                aria-label="show more"
+                            >
+                                <ExpandMoreIcon />
+                            </ExpandMore>
+                        </ListItem>
+                        <Collapse in={expanded} timeout="auto" unmountOnExit sx={!open && above_1313 ? { display: "flex" } : open && !above_1313 ? { display: "flex" } : { display: "none" }}>
+                            <CardContent>
+                                <div>monil</div>
+                            </CardContent>
+                        </Collapse>
                     </List>
                     {children}
                 </ScrollBar>

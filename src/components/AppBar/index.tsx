@@ -142,7 +142,7 @@ export default function AppBar() {
                             noWrap
                             component="div"
                         >
-                            <Link href="/">Online Store</Link>
+                            <Link href="/">Rent Pe</Link>
                         </Typography>
                         <Box sx={{ flexGrow: 1 }} />
                         <SearchBar />

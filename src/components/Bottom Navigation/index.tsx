@@ -1,13 +1,17 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import FolderIcon from '@mui/icons-material/Folder';
-import RestoreIcon from '@mui/icons-material/Restore';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { Box } from '@mui/system';
 import { easing, useMediaQuery, useScrollTrigger } from '@mui/material';
 import { Slide } from '@mui/material';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import { useDispatch, useSelector } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { actionCreator } from '../../state';
+import { RootState } from "../../state/reducers";
 
 interface Props {
     children: React.ReactElement
@@ -25,12 +29,19 @@ function HideOnScroll({ children }: Props) {
 
 
 export default function LabelBottomNavigation() {
-    const [value, setValue] = React.useState('recents');
+    const [value, setValue] = React.useState('');
+    const open = useSelector((state: RootState) => state.IsOpen)
+    useEffect(() => {
+        if (!open) {
+            setValue('')
+        }
+    }, [open])
 
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
         setValue(newValue);
     };
-
+    const dispatch = useDispatch()
+    const toggleDrawer = bindActionCreators(actionCreator.drawerToggle, dispatch)
     return (
         // <HideOnScroll>
 
@@ -38,9 +49,9 @@ export default function LabelBottomNavigation() {
 
             <BottomNavigation value={value} onChange={handleChange}>
                 <BottomNavigationAction
-                    label="Recents"
-                    value="recents"
-                    icon={<RestoreIcon />}
+                    label="Nearby"
+                    value="nearby"
+                    icon={<LocationOnIcon />}
                 />
                 <BottomNavigationAction
                     label="Favorites"
@@ -48,14 +59,10 @@ export default function LabelBottomNavigation() {
                     icon={<FavoriteIcon />}
                 />
                 <BottomNavigationAction
-                    label="Nearby"
-                    value="nearby"
-                    icon={<LocationOnIcon />}
-                />
-                <BottomNavigationAction
-                    label="Folder"
-                    value="folder"
-                    icon={<FolderIcon />}
+                    label="Filter"
+                    value="filter"
+                    icon={<FilterAltIcon />}
+                    onClick={() => toggleDrawer()}
                 />
             </BottomNavigation>
         </Box>
